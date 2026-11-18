@@ -1,0 +1,23 @@
+
+[theme]
+base = "dark"
+primaryColor = "#17834D"
+backgroundColor = "#080F14"
+secondaryBackgroundColor = "#13232B"
+textColor = "#E8F4F1"
+borderColor = "#29434D"
+greenColor = "#42D99A"
+greenTextColor = "#75F0B0"
+blueColor = "#42CFFF"
+orangeColor = "#F5B34C"
+violetColor = "#F472B6"
+violetTextColor = "#F9A8D4"
+violetBackgroundColor = "#3B1A2D"
+baseRadius = "large"
+buttonRadius = "12px"
+showWidgetBorder = true
+headingFontWeights = [800, 700, 700, 600, 600, 600]
+metricValueFontWeight = 800
+metricValueFontSize = "2rem"
+paddingTop = "1.25rem"
+paddingBottom = "2rem"
