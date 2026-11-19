@@ -11,6 +11,44 @@ from streamlit.errors import StreamlitSecretNotFoundError
 from product_quiz import CATALOG_URL, PRODUCTS, QUESTION_BANK_VERSION, QUESTION_SETS as PRODUCT_QUESTION_SETS
 from result_store import DatabaseSettings, QuizSubmission, TEST_CONSENT_VERSION, save_submission
 
+
+def load_database_settings() -> DatabaseSettings:
+    """Load DB settings from Streamlit secrets or Hugging Face Space env vars."""
+    try:
+        postgres = st.secrets["postgres"]
+        return {
+            "host": str(postgres["host"]),
+            "port": int(postgres["port"]),
+            "dbname": str(postgres["dbname"]),
+            "user": str(postgres["user"]),
+            "password": str(postgres["password"]),
+            "sslmode": str(postgres.get("sslmode", "require")),
+        }
+    except (KeyError, StreamlitSecretNotFoundError, TypeError, ValueError):
+        pass
+
+    required = {
+        "host": os.environ.get("POSTGRES_HOST"),
+        "dbname": os.environ.get("POSTGRES_DB", "postgres"),
+        "user": os.environ.get("POSTGRES_USER"),
+        "password": os.environ.get("POSTGRES_PASSWORD"),
+        "sslmode": os.environ.get("POSTGRES_SSLMODE", "require"),
+    }
+    missing = [key for key, value in required.items() if key != "sslmode" and not value]
+    if missing:
+        raise StreamlitSecretNotFoundError(
+            f"Missing database settings: {', '.join(missing)}"
+        )
+    return {
+        "host": required["host"],
+        "port": int(os.environ.get("POSTGRES_PORT", "5432")),
+        "dbname": required["dbname"],
+        "user": required["user"],
+        "password": required["password"],
+        "sslmode": required["sslmode"],
+    }
+
+
 # ==========================================
 # 1. 페이지 기본 설정
 # ==========================================
@@ -592,12 +630,7 @@ elif st.session_state.step == "RESULT":
     if not st.session_state.result_saved and st.session_state.save_error is None:
         with st.spinner("테스트 결과를 클라우드에 저장하고 있습니다."):
             try:
-                postgres = st.secrets["postgres"]
-                settings: DatabaseSettings = {
-                    "host": postgres["host"], "port": postgres["port"],
-                    "dbname": postgres["dbname"], "user": postgres["user"],
-                    "password": postgres["password"], "sslmode": postgres["sslmode"],
-                }
+                settings = load_database_settings()
                 submission: QuizSubmission = {
                     "submission_id": st.session_state.submission_id,
                     "participant_name": st.session_state.participant["name"],
