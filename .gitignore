@@ -1,0 +1,7 @@
+.streamlit/secrets.toml
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+tools/cloudflared.exe
+1.30.0
