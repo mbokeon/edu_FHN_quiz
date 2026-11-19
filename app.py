@@ -16,7 +16,7 @@ from result_store import DatabaseSettings, QuizSubmission, TEST_CONSENT_VERSION,
 # ==========================================
 st.set_page_config(
     page_title="바이엘 제품 학습 미션",
-    page_icon=":material/sports_esports:",
+    page_icon="🎮",
     layout="centered"
 )
 
